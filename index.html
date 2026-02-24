@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Slope Stability Predictor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #e3f2fd, #ffffff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 400px;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        .result {
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+            padding: 12px;
+            background: #ecf0f1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Slope Stability Predictor</h2>
+
+        <form id="predictForm">
+            <label>Unit Weight:</label>
+            <input type="number" name="unit_weight" step="any" required>
+
+            <label>Cohesion:</label>
+            <input type="number" name="cohesion" step="any" required>
+
+            <label>Internal Friction Angle:</label>
+            <input type="number" name="friction" step="any" required>
+
+            <label>Slope Angle:</label>
+            <input type="number" name="slope_angle" step="any" required>
+
+            <label>Slope Height:</label>
+            <input type="number" name="slope_height" step="any" required>
+
+            <label>Pore Pressure Ratio:</label>
+            <input type="number" name="pore_pressure" step="any" required>
+
+            <button type="submit">Predict</button>
+        </form>
+
+        <div class="result" id="result">Prediction: </div>
+    </div>
+
+    <script>
+        document.getElementById("predictForm").addEventListener("submit", (e) => {
+            e.preventDefault(); // Prevent default form submission
+
+            const formData = new FormData(e.target); // Get form data
+
+            fetch("http://127.0.0.1:5000/predict", {
+                method: "POST",
+                body: formData // Send as form-data
+            })
+                .then(response => response.json())
+                .then(json => {
+                    if (json.prediction) {
+                        document.getElementById("result").innerText = "Prediction: " + json.prediction;
+                    } else {
+                        document.getElementById("result").innerText = "Error: " + json.error;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById("result").innerText = "Error sending data";
+                    console.error(error);
+                });
+        });
+    </script>
+</body>
+
+</html>
